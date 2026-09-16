@@ -17,9 +17,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Create Project Structure & Build
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Create Project & Build
         run: |
-          mkdir -p app/src/main/java/com/example/cyclingtracker app/src/main/res/layout
+          mkdir -p app/src/main/java/com/example/cyclingtracker
           mv MainActivity.kt app/src/main/java/com/example/cyclingtracker/
           mv AndroidManifest.xml app/src/main/
           
@@ -29,10 +32,21 @@ jobs:
 
           cat << 'EOF' > build.gradle
           buildscript {
-              repositories { google(); mavenCentral() }
-              dependencies { classpath 'com.android.tools.build:gradle:8.1.1'; classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10' }
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+              dependencies {
+                  classpath 'com.android.tools.build:gradle:8.1.1'
+                  classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10'
+              }
           }
-          allprojects { repositories { google(); mavenCentral() } }
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
           EOF
 
           cat << 'EOF' > app/build.gradle
