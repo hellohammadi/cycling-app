@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -17,10 +17,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Create Project & Build
+      - name: Setup Gradle Wrapper & Build APK
         run: |
           mkdir -p app/src/main/java/com/example/cyclingtracker
           mv MainActivity.kt app/src/main/java/com/example/cyclingtracker/
@@ -32,20 +29,14 @@ jobs:
 
           cat << 'EOF' > build.gradle
           buildscript {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
+              repositories { google(); mavenCentral() }
               dependencies {
                   classpath 'com.android.tools.build:gradle:8.1.1'
                   classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10'
               }
           }
           allprojects {
-              repositories {
-                  google()
-                  mavenCentral()
-              }
+              repositories { google(); mavenCentral() }
           }
           EOF
 
@@ -71,7 +62,9 @@ jobs:
           }
           EOF
 
-          gradle assembleDebug
+          # Install wrapper to fix Gradle version mismatch
+          gradle wrapper --gradle-version 8.0
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
